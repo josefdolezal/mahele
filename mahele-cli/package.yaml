@@ -27,7 +27,7 @@ library:
   source-dirs: src
 
 executables:
-  mahele-cli-exe:
+  mahele-cli:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
