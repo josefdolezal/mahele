@@ -14,6 +14,11 @@ data Symbol = Assignment
             | Colon
             | Apostrophe
 
+data ParsedType = ParsedType
+    { ptIdentifier :: String
+    , peFields     :: [TypeField]
+    }
+
 data ParsedEnum = ParsedEnum
     { peIdentifier :: String
     , peCases      :: [EnumCase]
@@ -23,6 +28,12 @@ data EnumCase = EnumCase
     { ecIdentifier :: String
     , ecRawValue   :: Maybe String
     } deriving (Show)
+
+data TypeField = TypeField
+    { tfIdentifier :: String
+    , tfDataType   :: String
+    , tfIsOptional :: Bool
+    }
 
 instance Show ModelType where
     show Type = "type"
@@ -38,11 +49,28 @@ symbol Option      = '?'
 symbol Colon       = ':'
 symbol Apostrophe  = '\''
 
+typeDef :: GenParser Char st ParsedType
+typeDef = do
+    a <- typeAnnotation Type
+    cs <- many $ do { newline; field }
+    return $ ParsedType a cs 
+
 enum :: GenParser Char st ParsedEnum
 enum = do
     a  <- typeAnnotation Enum
     cs <- many1 $ do { newline; enumCase }
     return $ ParsedEnum a cs
+
+field :: GenParser Char st TypeField
+field = do
+    spaces
+    fId <- fieldName
+    spaces
+    colon
+    spaces
+    fType <- fieldType
+    fOpt <- optionality
+    return $ TypeField fId fType fOpt
 
 enumCase :: GenParser Char st EnumCase
 enumCase = do
@@ -100,8 +128,9 @@ alternative = reservedSymbol Alternative
 assignment :: GenParser Char st Char
 assignment = reservedSymbol Assignment
 
-optionality :: GenParser Char st Char
-optionality = reservedSymbol Option
+optionality :: GenParser Char st Bool
+optionality = try $ (\_ -> True) <$> (reservedSymbol Option)
+              <|> return False
 
 colon :: GenParser Char st Char
 colon = reservedSymbol Colon
