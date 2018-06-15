@@ -1,10 +1,10 @@
 import Test.Hspec
 
+import qualified Parser.SchemaParserSpec
+
 main :: IO ()
 main = hspec spec
 
 spec :: Spec
 spec = do
-    describe "Parser.SchemaParser" $ do
-        it "works" $
-            True `shouldBe` True
+    describe "Parser.SchemaParserSpec" Parser.SchemaParserSpec.spec

@@ -1,0 +1,3 @@
+enum UserRole =
+    | Superuser as 'admin'
+    | Customer as 'user'
