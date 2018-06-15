@@ -29,110 +29,110 @@ symbol Apostrophe  = '\''
 -- Public API
 
 parseSchema :: String -> Either ParseError [Model]
-parseSchema = undefined --parse modelTypes ""
+parseSchema = parse modelTypes ""
 
--- -- Parsers
+-- Parsers
 
--- modelTypes :: GenParser Char st [Model]
--- modelTypes = do
---     many whiteChar
---     many modelType
+modelTypes :: GenParser Char st [Model]
+modelTypes = do
+    many whiteChar
+    many modelType
 
--- modelType :: GenParser Char st Model
--- modelType = do
---     many whiteChar
---     (Left <$> typeDef) <|> (Right <$> enum)
+modelType :: GenParser Char st Model
+modelType = do
+    many whiteChar
+    (Left <$> typeDef) <|> (Right <$> enum)
 
--- typeDef :: GenParser Char st Type
--- typeDef = do
---     a <- typeAnnotation "type"
---     cs <- many $ do { newline; field }
---     return $ Type a cs
+typeDef :: GenParser Char st Type
+typeDef = do
+    a <- typeAnnotation "type"
+    cs <- many $ do { newline; field }
+    return $ Type a cs
 
--- enum :: GenParser Char st Enumeration
--- enum = do
---     a  <- typeAnnotation "enum"
---     cs <- many1 $ do { newline; enumCase }
---     return $ Enumeration a cs
+enum :: GenParser Char st Enumeration
+enum = do
+    a  <- typeAnnotation "enum"
+    cs <- many1 $ do { newline; enumCase }
+    return $ Enumeration a cs
 
--- field :: GenParser Char st Property
--- field = do
---     spaces
---     fId <- fieldName
---     spaces
---     colon
---     spaces
---     fType <- fieldType
---     fOpt <- optionality
---     return $ Property fId fType fOpt
+field :: GenParser Char st Property
+field = do
+    spaces
+    fId <- fieldName
+    spaces
+    colon
+    spaces
+    fType <- fieldType
+    fOpt <- optionality
+    return $ Property fId fType fOpt
 
--- enumCase :: GenParser Char st Case
--- enumCase = do
---     spaces
---     alternative
---     spaces
---     c <- constructor
---     v <- optionalRawValue
---     return $ Case c v
+enumCase :: GenParser Char st Case
+enumCase = do
+    spaces
+    alternative
+    spaces
+    c <- constructor
+    v <- optionalRawValue
+    return $ Case c v
 
--- typeAnnotation :: String -> GenParser Char st String
--- typeAnnotation modelType = do
---     string modelType
---     spaces
---     name <- typename
---     spaces
---     assignment
---     return name
+typeAnnotation :: String -> GenParser Char st String
+typeAnnotation modelType = do
+    string modelType
+    spaces
+    name <- typename
+    spaces
+    assignment
+    return name
 
--- constructor :: GenParser Char st String
--- constructor = identifier
+constructor :: GenParser Char st String
+constructor = identifier
 
--- optionalRawValue :: GenParser Char st (Maybe String)
--- optionalRawValue = try (Just <$> rawValue)
---                     <|> do { spaces; return Nothing }
+optionalRawValue :: GenParser Char st (Maybe String)
+optionalRawValue = try (Just <$> rawValue)
+                    <|> do { spaces; return Nothing }
 
--- rawValue :: GenParser Char st String
--- rawValue = do
---     spaces
---     string $ show Cast
---     spaces
---     quoted identifier
+rawValue :: GenParser Char st String
+rawValue = do
+    spaces
+    string $ show Cast
+    spaces
+    quoted identifier
 
--- typename :: GenParser Char st String
--- typename = identifier
+typename :: GenParser Char st String
+typename = identifier
 
--- fieldType :: GenParser Char st String
--- fieldType = identifier
+fieldType :: GenParser Char st String
+fieldType = identifier
 
--- fieldName :: GenParser Char st String
--- fieldName = identifier
+fieldName :: GenParser Char st String
+fieldName = identifier
 
--- identifier :: GenParser Char st String
--- identifier = do
---     c <- letter
---     cs <- many alphaNum
---     return (c:cs)
+identifier :: GenParser Char st String
+identifier = do
+    c <- letter
+    cs <- many alphaNum
+    return (c:cs)
 
--- quoted :: GenParser Char st a -> GenParser Char st a
--- quoted = between (char $ symbol Apostrophe) (char $ symbol Apostrophe)
+quoted :: GenParser Char st a -> GenParser Char st a
+quoted = between (char $ symbol Apostrophe) (char $ symbol Apostrophe)
 
--- alternative :: GenParser Char st Char
--- alternative = reservedSymbol Alternative
+alternative :: GenParser Char st Char
+alternative = reservedSymbol Alternative
 
--- assignment :: GenParser Char st Char
--- assignment = reservedSymbol Assignment
+assignment :: GenParser Char st Char
+assignment = reservedSymbol Assignment
 
--- optionality :: GenParser Char st Bool
--- optionality = try $ const True <$> reservedSymbol Option
---                 <|> return False
+optionality :: GenParser Char st Bool
+optionality = try $ const True <$> reservedSymbol Option
+                <|> return False
 
--- colon :: GenParser Char st Char
--- colon = reservedSymbol Colon
+colon :: GenParser Char st Char
+colon = reservedSymbol Colon
 
--- reservedSymbol :: Symbol -> GenParser Char st Char
--- reservedSymbol = char . symbol
+reservedSymbol :: Symbol -> GenParser Char st Char
+reservedSymbol = char . symbol
 
--- whiteChar :: GenParser Char st Char
--- whiteChar = space
---          <|> tab 
---          <|> newline
+whiteChar :: GenParser Char st Char
+whiteChar = space
+         <|> tab 
+         <|> newline
