@@ -1,9 +1,9 @@
 module Parser.Models (
-    Model,
-    Type,
-    Property,
-    Enumeration,
-    Case
+    Model(..),
+    Type(..),
+    Property(..),
+    Enumeration(..),
+    Case(..)
     ) where
 
 type Model = Either Type Enumeration
@@ -11,8 +11,7 @@ type Model = Either Type Enumeration
 -- Data
 
 data Type = Type
-    { ptIdentifier :: String
-    , peFields     :: [Type]
+    , peFields     :: [Property]
     } deriving (Show)
 
 data Property = Property
