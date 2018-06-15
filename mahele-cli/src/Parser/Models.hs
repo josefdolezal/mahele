@@ -13,22 +13,22 @@ type Model = Either Type Enumeration
 data Type = Type
     { typeIdentifier :: String
     , peFields     :: [Property]
-    } deriving (Show)
+    } deriving (Show, Eq)
 
 data Property = Property
     { propertyIdentifier :: String
     , propertyDataType   :: String
     , propertyIsOptional :: Bool
-    } deriving (Show)
+    } deriving (Show, Eq)
 
 -- Enumeration
 
 data Enumeration = Enumeration
     { enumIdentifier :: String
     , enumCases      :: [Case]
-    } deriving (Show)
+    } deriving (Show, Eq)
         
 data Case = Case
     { caseIdentifier :: String
     , caseRawValue   :: Maybe String
-    } deriving (Show)
+    } deriving (Show, Eq)
