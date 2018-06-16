@@ -1,5 +1,23 @@
+# This example shows 'messed up' formatting
+# for types and multiple declarations in one file
+
+# Types starts using 'type' keyword
+# followed by its name and list of properties
 type User =
     id:    Int
     email: String
     name:  String?
     role:  UserRole
+type BlogPost =  
+    id: Int
+    title: String   
+  content: String
+    rating: Int?
+userId: Int
+categoryId: Int
+
+# The indentation for previous properties is ignored
+type Category =
+    id: Int
+    title: String
+    description: String

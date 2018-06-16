@@ -1,6 +1,5 @@
 module Parser.SchemaParser
     ( parseSchema
-    , enumCase
     ) where
 
 import Text.ParserCombinators.Parsec
@@ -16,6 +15,7 @@ data Symbol = Assignment
             | Option
             | Colon
             | Apostrophe
+            | Comment
 
 instance Show Keyword where
     show Cast = "as"
@@ -26,6 +26,7 @@ symbol Alternative = '|'
 symbol Option      = '?'
 symbol Colon       = ':'
 symbol Apostrophe  = '\''
+symbol Comment     = '#'
 
 -- Public API
 
@@ -39,24 +40,25 @@ modelTypes = many modelType
 
 modelType :: GenParser Char st Model
 modelType = do
-    many whiteChar
+    many $ do { try comment; whiteChars }
     (Left <$> typeDef) <|> (Right <$> enum)
 
 typeDef :: GenParser Char st Type
 typeDef = do
     a <- typeAnnotation "type"
-    cs <- many $ do { newline; field }
-    return $ Type a cs
+    props <- many $ try property
+    whiteChars
+    return $ Type a props
 
 enum :: GenParser Char st Enumeration
 enum = do
-    a  <- typeAnnotation "enum"
-    cs <- many1 (try enumCase)
+    a <- typeAnnotation "enum"
+    cases <- many1 $ try enumCase
     whiteChars
-    return $ Enumeration a cs
+    return $ Enumeration a cases
 
-field :: GenParser Char st Property
-field = do
+property :: GenParser Char st Property
+property = do
     inlineInvisibles
     fId <- fieldName
     inlineInvisibles
@@ -64,6 +66,8 @@ field = do
     inlineInvisibles
     fType <- fieldType
     fOpt <- optionality
+    inlineInvisibles
+    endOfLine
     return $ Property fId fType fOpt
 
 enumCase :: GenParser Char st Case
@@ -130,6 +134,13 @@ optionality :: GenParser Char st Bool
 optionality = try $ const True <$> reservedSymbol Option
                 <|> return False
 
+comment :: GenParser Char st String
+comment = do
+    inlineInvisibles
+    reservedSymbol Comment
+    inlineInvisible
+    manyTill anyChar endOfLine
+
 colon :: GenParser Char st Char
 colon = reservedSymbol Colon
 
@@ -137,7 +148,7 @@ reservedSymbol :: Symbol -> GenParser Char st Char
 reservedSymbol = char . symbol
 
 whiteChars :: GenParser Char st String
-whiteChars = many whiteChar 
+whiteChars = many whiteChar
 
 whiteChar :: GenParser Char st Char
 whiteChar = inlineInvisible

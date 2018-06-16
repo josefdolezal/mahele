@@ -37,6 +37,17 @@ expectedTypes = [ Type "User" [ Property "id" "Int" False
                               , Property "name" "String" True
                               , Property "role" "UserRole" False
                               ]
+                , Type "BlogPost" [ Property "id" "Int" False
+                                  , Property "title" "String" False
+                                  , Property "content" "String" False
+                                  , Property "rating" "Int" True
+                                  , Property "userId" "Int" False
+                                  , Property "categoryId" "Int" False
+                                  ]
+                , Type "Category" [ Property "id" "Int" False
+                                  , Property "title" "String" False
+                                  , Property "description" "String" False
+                                  ]
                 ]
 
 spec :: Spec
@@ -51,12 +62,12 @@ spec = do
         it "all enums are tested" $
             length actualEnums `shouldBe` length expectedEnums
     
-    -- describe "Types" $ do
-    --     actualTypes <- runIO $ fixture "Types.mahele"
-    --     let types = zip actualTypes expectedTypes
-    --     forM_ types $ \(actual, expected) ->
-    --         it (printf "it parse '%s' type" $ typeIdentifier expected) $
-    --             actual `shouldBe` Left expected
+    describe "Types" $ do
+        actualTypes <- runIO $ fixture "Types.mahele"
+        let types = zip actualTypes expectedTypes
+        forM_ types $ \(actual, expected) ->
+            it (printf "it parse '%s' type" $ typeIdentifier expected) $
+                actual `shouldBe` Left expected
 
-    --     it "all types are tested" $
-    --         length actualTypes `shouldBe` length expectedTypes
+        it "all types are tested" $
+            length actualTypes `shouldBe` length expectedTypes

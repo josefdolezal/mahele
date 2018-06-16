@@ -1,12 +1,23 @@
+# This test example shows usage of Enums.
+# Enums are introduced with 'enum' keyword followed by
+# its name and list of cases.
+
+# Case may have associated raw-value which
+# which may be used as plain representation of case.
+
+# Test raw-value-only case
 enum UserRole =   
     | Superuser as 'admin'
     | Customer as 'user'
 
+# Test combined cases
+# Notice that indentation and spacing is ignored
 enum Device =
   |   Laptop as 'notebook'
     | Phone
     | PC
 
+# Test cases without raw value
 enum OS =
     | Linux
     | MacOS   
