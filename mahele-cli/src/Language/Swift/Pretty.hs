@@ -40,8 +40,7 @@ instance PrettySwift Type where
 instance PrettySwift Property where
     pretty (Property id t opt) = hsep [ text "var"
                                       , text id <> colon
-                                      , text t
-                                      , prettyOptional opt
+                                      , text t <> prettyOptional opt
                                       ]
 
 instance PrettySwift Enumeration where
