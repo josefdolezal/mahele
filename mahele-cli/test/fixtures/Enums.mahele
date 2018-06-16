@@ -1,3 +1,13 @@
-enum UserRole =
+enum UserRole =   
     | Superuser as 'admin'
     | Customer as 'user'
+
+enum Device =
+  |   Laptop as 'notebook'
+    | Phone
+    | PC
+
+enum OS =
+    | Linux
+    | MacOS   
+    | Windows 

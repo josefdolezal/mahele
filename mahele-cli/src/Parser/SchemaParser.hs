@@ -1,5 +1,6 @@
 module Parser.SchemaParser
     ( parseSchema
+    , enumCase
     ) where
 
 import Text.ParserCombinators.Parsec
@@ -34,9 +35,7 @@ parseSchema = parse modelTypes ""
 -- Parsers
 
 modelTypes :: GenParser Char st [Model]
-modelTypes = do
-    many whiteChar
-    many modelType
+modelTypes = many modelType
 
 modelType :: GenParser Char st Model
 modelType = do
@@ -52,36 +51,41 @@ typeDef = do
 enum :: GenParser Char st Enumeration
 enum = do
     a  <- typeAnnotation "enum"
-    cs <- many1 $ do { newline; enumCase }
+    cs <- many1 (try enumCase)
+    whiteChars
     return $ Enumeration a cs
 
 field :: GenParser Char st Property
 field = do
-    spaces
+    inlineInvisibles
     fId <- fieldName
-    spaces
+    inlineInvisibles
     colon
-    spaces
+    inlineInvisibles
     fType <- fieldType
     fOpt <- optionality
     return $ Property fId fType fOpt
 
 enumCase :: GenParser Char st Case
 enumCase = do
-    spaces
+    inlineInvisibles
     alternative
-    spaces
+    inlineInvisibles
     c <- constructor
     v <- optionalRawValue
+    inlineInvisibles
+    endOfLine
     return $ Case c v
 
 typeAnnotation :: String -> GenParser Char st String
 typeAnnotation modelType = do
     string modelType
-    spaces
+    inlineInvisibles
     name <- typename
-    spaces
+    inlineInvisibles
     assignment
+    inlineInvisibles
+    newline
     return name
 
 constructor :: GenParser Char st String
@@ -89,13 +93,13 @@ constructor = identifier
 
 optionalRawValue :: GenParser Char st (Maybe String)
 optionalRawValue = try (Just <$> rawValue)
-                    <|> do { spaces; return Nothing }
+                    <|> do { inlineInvisibles; return Nothing }
 
 rawValue :: GenParser Char st String
 rawValue = do
-    spaces
+    inlineInvisibles
     string $ show Cast
-    spaces
+    inlineInvisibles
     quoted identifier
 
 typename :: GenParser Char st String
@@ -132,7 +136,17 @@ colon = reservedSymbol Colon
 reservedSymbol :: Symbol -> GenParser Char st Char
 reservedSymbol = char . symbol
 
+whiteChars :: GenParser Char st String
+whiteChars = many whiteChar 
+
 whiteChar :: GenParser Char st Char
-whiteChar = space
-         <|> tab 
+whiteChar = inlineInvisible
          <|> newline
+inlineInvisibles = many inlineInvisible
+
+inlineInvisible :: GenParser Char st Char
+inlineInvisible = oneOf "\t "
+
+endOfLine :: GenParser Char st ()
+endOfLine = eof
+         <|> do { newline; return () }

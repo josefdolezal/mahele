@@ -6,6 +6,7 @@ import Control.Monad
 import Data.Semigroup
 import Text.Printf
 import qualified Parser.SchemaParser as Parser
+import Text.ParserCombinators.Parsec
 import Parser.Models
 
 fixture :: FilePath -> IO [Model]
@@ -20,6 +21,14 @@ expectedEnums :: [Enumeration]
 expectedEnums = [ Enumeration "UserRole" [ Case "Superuser" (Just "admin")
                                          , Case "Customer" (Just "user")
                                          ]
+                , Enumeration "Device" [ Case "Laptop" (Just "notebook")
+                                       , Case "Phone" Nothing
+                                       , Case "PC" Nothing
+                                       ]
+                , Enumeration "OS" [ Case "Linux" Nothing
+                                   , Case "MacOS" Nothing
+                                   , Case "Windows" Nothing
+                                   ]
                 ]
 
 expectedTypes :: [Type]
@@ -42,12 +51,12 @@ spec = do
         it "all enums are tested" $
             length actualEnums `shouldBe` length expectedEnums
     
-    describe "Types" $ do
-        actualTypes <- runIO $ fixture "Types.mahele"
-        let types = zip actualTypes expectedTypes
-        forM_ types $ \(actual, expected) ->
-            it (printf "it parse '%s' type" $ typeIdentifier expected) $
-                actual `shouldBe` Left expected
+    -- describe "Types" $ do
+    --     actualTypes <- runIO $ fixture "Types.mahele"
+    --     let types = zip actualTypes expectedTypes
+    --     forM_ types $ \(actual, expected) ->
+    --         it (printf "it parse '%s' type" $ typeIdentifier expected) $
+    --             actual `shouldBe` Left expected
 
-        it "all types are tested" $
-            length actualTypes `shouldBe` length expectedTypes
+    --     it "all types are tested" $
+    --         length actualTypes `shouldBe` length expectedTypes
