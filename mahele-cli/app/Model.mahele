@@ -1,0 +1,22 @@
+# Defines user object
+type User =
+    id: Int
+    email: String
+    password: String
+    role: UserRole
+    address: String?
+
+# Defines blog post with 1:1 relation to
+# user object
+type BlogPost =
+    id: Int
+    title: String
+    content: String
+    userId: Int
+    rating: Int?
+
+# Defines User role enumeration
+# with custom raw value
+enum UserRole =
+    | Author as 'user'
+    | Admin
