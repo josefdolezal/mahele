@@ -81,13 +81,21 @@ type Role
 
 ## Usage
 
-### Available commands
+Mahele is currently under development and supports only `mahele -> Swift` code conversion.
+
+To setup the project, run:
+
+1. cd `mahele-cli`
+2. `stack build`
+
+You can use Mahele CLI to generate Swift source files using following command in `mahele-cli` directory:
+
+```sh
+stack build && stack exec mahele-cli -- <ModeSource.mahele>
+```
 
 <details>
-<summary>Commands</summary>
-</details>
-
-### CLI
+<summary>In progress</summary>
 
 Mahele is primarly distributed as a CLI tool.
 To create the model, you have two options:
@@ -105,6 +113,8 @@ $ mahele create myschema.mahele
 ```
 
 Whenever possible, use the first option - this will help you to use latest schema on all platforms.
+
+</details>
 
 ### Web interface
 
