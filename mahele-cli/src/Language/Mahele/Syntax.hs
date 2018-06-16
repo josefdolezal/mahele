@@ -12,7 +12,7 @@ type Token = Either Type Enumeration
 
 data Type = Type
     { typeIdentifier :: String
-    , peFields     :: [Property]
+    , typeProp       :: [Property]
     } deriving (Show, Eq)
 
 data Property = Property
