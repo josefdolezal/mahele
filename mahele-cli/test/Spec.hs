@@ -1,10 +1,10 @@
 import Test.Hspec
 
-import qualified Parser.SchemaParserSpec
+import qualified Language.Mahele.ParserSpec
 
 main :: IO ()
 main = hspec spec
 
 spec :: Spec
 spec = do
-    describe "Parser.SchemaParserSpec" Parser.SchemaParserSpec.spec
+    describe "Language.Mahele.ParserSpec" Language.Mahele.ParserSpec.spec

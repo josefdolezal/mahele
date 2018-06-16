@@ -1,12 +1,12 @@
-module Parser.Models (
-    Model(..),
+module Language.Mahele.Syntax (
+    Token(..),
     Type(..),
     Property(..),
     Enumeration(..),
     Case(..)
     ) where
 
-type Model = Either Type Enumeration
+type Token = Either Type Enumeration
 
 -- Data
 

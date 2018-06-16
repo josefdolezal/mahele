@@ -1,10 +1,10 @@
-module Parser.SchemaParser
-    ( parseSchema
+module Language.Mahele.Parser
+    ( parseMahele
     ) where
 
-import Text.ParserCombinators.Parsec
+import           Text.ParserCombinators.Parsec
 import qualified Data.Maybe
-import Parser.Models
+import           Language.Mahele.Syntax
 
 -- Internal data structures
 
@@ -30,16 +30,16 @@ symbol Comment     = '#'
 
 -- Public API
 
-parseSchema :: String -> Either ParseError [Model]
-parseSchema = parse modelTypes ""
+parseMahele :: String -> Either ParseError [Token]
+parseMahele = parse models ""
 
 -- Parsers
 
-modelTypes :: GenParser Char st [Model]
-modelTypes = many modelType
+models :: GenParser Char st [Token]
+models = many model
 
-modelType :: GenParser Char st Model
-modelType = do
+model :: GenParser Char st Token
+model = do
     many $ do { try comment; whiteChars }
     (Left <$> typeDef) <|> (Right <$> enum)
 
