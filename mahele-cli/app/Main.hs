@@ -2,7 +2,6 @@
 
 module Main where
 
-import           Lib
 import qualified Language.Mahele.Parser as P
 import qualified Language.Swift.Pretty as P
 import           Turtle
